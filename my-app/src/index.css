@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f0f0f0;
 }
 
 code {
@@ -17,6 +18,9 @@ code {
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 h1 {
@@ -24,11 +28,20 @@ h1 {
   color: #2c3e50;
 }
 
-.deck-selector {
+.game-settings {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
   margin-bottom: 20px;
 }
 
-.deck-selector label {
+.deck-selector, .reset-selector {
+  display: flex;
+  align-items: center;
+}
+
+.deck-selector label, .reset-selector label {
   margin-right: 10px;
 }
 
@@ -36,10 +49,16 @@ h1 {
   width: 50px;
 }
 
+.game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .game-controls {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin: 20px 0;
 }
 
 .game-controls button {
@@ -59,7 +78,9 @@ h1 {
 }
 
 .hand {
+  width: 100%;
   margin-bottom: 30px;
+  text-align: center;
 }
 
 .hand h2 {
@@ -68,6 +89,7 @@ h1 {
 
 .cards {
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
 }
