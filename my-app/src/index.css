@@ -109,10 +109,10 @@ h2 {
 }
 
 .card {
-  width: auto; /* Reduced width */
+  width: auto; 
   height: 120px; /* Reduced height */
   border: 1px solid #bdc3c7;
-  border-radius: 10px;
+  border-radius: 5px;
   overflow: hidden;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
