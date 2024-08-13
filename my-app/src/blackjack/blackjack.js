@@ -29,7 +29,7 @@ function Blackjack() {
   }, [numDecks]);
 
   useEffect(() => {
-    if (sumValue(playerHand) > 21) {
+    if (sumValue(playerHand) >= 21) {
       setGameStatus('over');
     }
   }, [playerHand]);
@@ -67,6 +67,12 @@ function Blackjack() {
     setDealerHand([card3]);
     setGameStatus('playerMove');
   };
+
+  const getTextColor = (value) => {
+    if (value === 'player') return 'green';
+    return 'red'
+  };
+
 
   const hit = async () => {
     const newCard = await dealCard();
@@ -129,16 +135,15 @@ function Blackjack() {
     return 'tie';
   }
 
-  const endGame = () => {
-    setGameStatus('over');
-    const winner = checkWinner();
-    return winner;
-  }
-
   const stand = async () => {
     await dealerHit();
     setGameStatus('over');
   };
+
+  function capitalizeFirstLetter(str) {
+    if (!str) return ''; // Return an empty string if input is empty
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
   
 
   const handleNumDecksChange = (event) => {
@@ -225,8 +230,10 @@ function Blackjack() {
   
           {gameStatus === 'over' && (
             <div className="game-over">
-              <h2>Game Over!</h2>
-              <p>Winner: {checkWinner()}</p>
+              {checkWinner() !== 'tie' &&
+              <h2 style={{ color: getTextColor(checkWinner()) }}>{capitalizeFirstLetter(checkWinner())} Wins!</h2>}
+              {checkWinner() === 'tie' && 
+              <h2 style={{ color: 'blue' }}>Push!</h2>}
               <button onClick={initializeGame}>Play Again</button>
             </div>
           )}
