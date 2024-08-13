@@ -1,25 +1,32 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 import Blackjack from './blackjack/blackjack'
+import Poker from './poker/poker'
 
 function App() {
+  const [isBlackjack, setIsBlackjack] = useState(true);
+
+  const handleGameChange = () => {
+    setIsBlackjack(!isBlackjack);
+  };
+
   return (
     <div className="App">
+      <div className="game-switch">
+        <span className={`game-label1 ${isBlackjack ? 'active' : ''}`}>Blackjack</span>
+        <label className="switch">
+          <input 
+            type="checkbox" 
+            checked={!isBlackjack} 
+            onChange={handleGameChange}
+          />
+          <span className="slider round"></span>
+        </label>
+        <span className={`game-label1 ${!isBlackjack ? 'active' : ''}`}>Poker</span>
+      </div>
       <header className="App-header">
-        {/* <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a> */}
       </header>
-      <Blackjack/>
+      {isBlackjack ? <Blackjack /> : <Poker />}
     </div>
   );
 }
