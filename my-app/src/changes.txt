@@ -1,5 +1,4 @@
 changes to be made: 
-odds for what the end score of the dealer will be 
-fix the dealers overturned card / the count of cards that it posts
-styling the buttons at the top 
+probability of busting vs achieving a certain score for the player
+ie if you hit til you get 17 you have an x chance of busting
 

@@ -25,7 +25,7 @@ function Blackjack() {
       const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king', 'ace'];
       let newDeck = [];
   
-      if (resetDeckMode || deck.length === 0) {
+      if (resetDeckMode || deck.length >=10) {
         // Initialize a new deck
         for(let i = 0; i < numDecks; i++) {
           newDeck = [...newDeck, ...suits.flatMap(suit => values.map(value => ({ side: 'front', suit, value })))];
@@ -93,12 +93,26 @@ function Blackjack() {
     return 'red'
   };
 
+  const resetProbs = () => {
+    setNumBustsShown(0);
+    setBustOdds([]);
+  }
+
 
 
   const hit = async () => {
     const newCard = await dealCard();
     setPlayerHand(prevHand => [...prevHand, newCard]);
+    setBustOdds(fillOdds);
   };
+
+  const fillOdds = () => { 
+    let arr = [];
+    for (let i = 1; i <= numBustsShown; i++) {
+      arr.push(calculatePlayerOdds(playerHand, deck, i));
+    }
+    return arr;
+  }
 
   const dealerHit = async () => {
     let currentHand = [...dealerHand];
@@ -242,8 +256,10 @@ function Blackjack() {
               ))}
             </div>
             <p>Player Score: {sumValue(playerHand)}</p>
-            <button id="numBustsBtn" onClick={updateProbs}>show probabilities after {numBustsShown + 1} hits</button>
-            {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hits: </> <HitOddsList key={index} arr={bust}/></div>)}
+            
+            {gameStatus ==='playerMove' && (<><button className="numBustsBtn" onClick={updateProbs}>show probabilities after {numBustsShown + 1} hit{numBustsShown > 0 ? 's' : ''}</button>
+            {numBustsShown > 0 && (<button className="numBustsBtn" onClick={resetProbs}>clear</button>)}
+            {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hit{index > 0 ? 's' : ''}: </> <HitOddsList key={index} arr={bust}/></div>)}</>)}
           </div>
           <div className="hand dealer-hand">
             <h2>Dealer Hand:</h2>
