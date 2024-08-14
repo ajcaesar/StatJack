@@ -18,8 +18,8 @@ function Blackjack() {
   const [dealerOdds, setDealerOdds] = useState([]);
   const [numBustsShown, setNumBustsShown] = useState(0);
   const [bustOdds, setBustOdds] = useState([]);
-  const [wins, setWins] = useState(0);
-  const [losses, setLosses] = useState(0);
+  const [wins, setWins] = useState(() => parseInt(localStorage.getItem('wins')) || 0);
+  const [losses, setLosses] = useState(() => parseInt(localStorage.getItem('losses')) || 0);
   const [winner, setWinner] = useState('neither');
 
   const initializeDeck = () => {
@@ -42,6 +42,15 @@ function Blackjack() {
     });
   };
   
+  useEffect(() => {
+    localStorage.setItem('wins', wins);
+  }, [wins]);
+  
+  useEffect(() => {
+    localStorage.setItem('losses', losses);
+  }, [losses]);
+  
+
   useEffect(() => {
     initializeDeck();
   }, [numDecks]);
@@ -105,38 +114,51 @@ function Blackjack() {
     setBustOdds([]);
   }
 
+  // given a players score, what is the chance that they beat the dealer?
   function probOfStay(dealerArr, playerScore) {
     if (playerScore === 21) {
-      let win =1;
+      let win = 1;
       let tie = 0; 
       let lose = 0;
       return {win, tie, lose};
     }
-    let win = dealerArr[dealerArr.length - 1]; //chance of dealer busting 
+    if (playerScore > 21) {
+      let win = 0;
+      let tie = 0; 
+      let lose = 1;
+      return {win, tie, lose};
+    }
+
+    let win = 0
+    win += dealerArr[dealerArr.length - 1]; //chance of dealer busting 
     let tie = 0;
     let lose = 0;
     for(let i=0; i+17 < playerScore; i++) {
-      win += dealerArr[i];
+      win += dealerArr[i]; //chance the dealer scores less than the player
     }
     for (let z=4; z + 17 > playerScore && z >= 0; z--)   {
       lose += dealerArr[z];
     }
     if (playerScore-17 >= 0 ) { 
-      tie = dealerArr[playerScore - 17];
+      tie += dealerArr[playerScore - 17];
     }
     return {win, tie, lose};
   }
 
+  // probability that the player beats the dealer if they hit again
   function probOfHit(dealerArr, playerArr) {
-    let winOdds = playerArr[playerArr.length - 2] // + dealerArr[dealerArr.length - 1] * (1-playerArr[playerArr.length - 1]);
+    let winOdds = 0
+    winOdds += playerArr[playerArr.length - 2]; // chance of the player getting BlackJack // + dealerArr[dealerArr.length - 1] * (1-playerArr[playerArr.length - 1]);
     let tieOdds = 0;
-    let loseOdds = playerArr[playerArr.length - 1];
+    let loseOdds = 0;
+    loseOdds += playerArr[playerArr.length - 1]; // chance of the player busting
     for(let i = 0; i < playerArr.length - 2; i++) {
-      let {win, tie, lose} = probOfStay(dealerArr, i);
-      winOdds += playerArr[i] * win;
+      if (playerArr[i] > 0) {
+      let {win, tie, lose} = probOfStay(dealerArr, i+1);
+      winOdds += playerArr[i] * win; // probability of player getting this sum * probability of them winning if they get this sum
       tieOdds += playerArr[i] * tie; 
       loseOdds += playerArr[i] * lose;
-    }
+    }}
     return {winOdds, tieOdds, loseOdds};
   }
 
@@ -163,13 +185,22 @@ function Blackjack() {
     });
   };
 
-  const fillOdds = () => { 
+  const fillOdds = (updatedHand) => { 
     let arr = [];
     for (let i = 1; i <= numBustsShown; i++) {
-      arr.push(calculatePlayerOdds(playerHand, deck, i));
+      arr.push(calculatePlayerOdds(updatedHand, deck, i));
     }
     return arr;
-  }
+  };
+
+  useEffect(() => {
+    if (gameStatus === 'playerMove' && playerHand.length > 0) {
+      setBustOdds(fillOdds(playerHand));
+      const odds = calculatePlayerOdds(playerHand, deck, numBustsShown + 1);
+      setBustOdds(prev => [...prev, odds]);
+      setNumBustsShown(prev => prev + 1);
+    }
+  }, [playerHand]);
 
   const dealerHit = async () => {
     let currentHand = [...dealerHand];
@@ -306,7 +337,7 @@ function Blackjack() {
         }
       </div>
       <div className='wins-counter'><p className='wins'>wins: {wins}</p>
-      <p className='losses'>losses: {losses}</p><button onClick={resetWins}>reset wins</button></div>
+      <p className='losses'>losses: {losses}</p><button onClick={resetWins}>reset score</button></div>
       
   
       {gameStatus === 'idle' && (
