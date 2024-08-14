@@ -1,0 +1,5 @@
+changes to be made: 
+odds for what the end score of the dealer will be 
+fix the dealers overturned card / the count of cards that it posts
+styling the buttons at the top 
+
