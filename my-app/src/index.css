@@ -356,4 +356,22 @@ input:checked + .slider:before {
   background-color: darkblue;
 }
 
+#numBusts {
+  margin: 5px;
+}
 
+#numBustsBtn {
+  margin: 0 5px; /* Reduced margin */
+  padding: 8px 15px; /* Reduced padding */
+  font-size: 14px; /* Reduced font size */
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#numBustsBtn:hover {
+  background-color: darkblue;
+}

@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import Card from './components/card';
 import calculateDealerOdds from './bjStats';
 import OddsList from './components/oddsList';
+import calculatePlayerOdds from './playerStats';
+// import PlayerOddsList from './components/playerOdds';
+import HitOddsList from './components/hitOdds';
 
 function Blackjack() {
   const [deck, setDeck] = useState([]);
@@ -13,6 +16,8 @@ function Blackjack() {
   const [resetDeckMode, setResetDeckMode] = useState(true);
   const [showOdds, setShowOdds] = useState(false);
   const [dealerOdds, setDealerOdds] = useState([]);
+  const [numBustsShown, setNumBustsShown] = useState(0);
+  const [bustOdds, setBustOdds] = useState([]);
 
   const initializeDeck = () => {
     return new Promise(resolve => {
@@ -79,6 +84,8 @@ function Blackjack() {
     setDealerHand([card3]);
     setGameStatus('playerMove');
     setShowOdds(false);
+    setNumBustsShown(0);
+    setBustOdds([]);
   };
 
   const getTextColor = (value) => {
@@ -125,6 +132,12 @@ function Blackjack() {
     return sum;
   };
 
+  const updateProbs = async () => {
+    const odds = calculatePlayerOdds(playerHand, deck, numBustsShown + 1);
+    setBustOdds(prev => [...prev, odds]);
+    setNumBustsShown(prev => prev + 1);
+};
+
   const checkPlayerBust = () => {
     return sumValue(playerHand) > 21;
   }
@@ -158,7 +171,6 @@ function Blackjack() {
     if (!str) return ''; // Return an empty string if input is empty
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
-  
 
   const handleNumDecksChange = (event) => {
     const value = parseInt(event.target.value, 10);
@@ -177,7 +189,7 @@ function Blackjack() {
 
   const dealerOddsBtn = () => {
     setShowOdds(true);
-    const odds = calculateDealerOdds(dealerHand[0], deck);
+    const odds = calculateDealerOdds([dealerHand[0]], deck);
     setDealerOdds(odds);
   };
 
@@ -230,8 +242,9 @@ function Blackjack() {
               ))}
             </div>
             <p>Player Score: {sumValue(playerHand)}</p>
+            <button id="numBustsBtn" onClick={updateProbs}>show probabilities after {numBustsShown + 1} hits</button>
+            {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hits: </> <HitOddsList key={index} arr={bust}/></div>)}
           </div>
-  
           <div className="hand dealer-hand">
             <h2>Dealer Hand:</h2>
             <div className="cards">
@@ -256,6 +269,7 @@ function Blackjack() {
             <button onClick={() => stand().catch(console.error)}>Stand</button>
         {!showOdds && (<button onClick={dealerOddsBtn}>Show Dealer Odds</button>)}
         {showOdds && (<button onClick={dealerOddsBtn}>Recalculate dealer odds</button>)}
+        <button onClick={initializeGame}>Restart</button>
         </div>
         </>
         )}

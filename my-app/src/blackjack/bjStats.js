@@ -1,4 +1,4 @@
-const calculateDealerOdds = (dealerCard, deck) => {
+const calculateDealerOdds = (dealerCards, deck) => {
     const len = deck.length;
     const conversion = {
         'ace': 1,
@@ -22,7 +22,12 @@ const calculateDealerOdds = (dealerCard, deck) => {
         zeros[conversion[card.value] - 1] += 1;
     }
 
-    calcRecursive([conversion[dealerCard.value]], zeros, 1, counts, len);
+    let cds = [];
+    for (let cd of dealerCards) {
+        cds = [...cds, conversion[cd.value]];
+    }
+
+    calcRecursive(cds, zeros, 1, counts, len);
   
     // const totalOutcomes = sumArr(counts);
         const totalOutcomes = 1;
