@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Card from './components/card';
+import calculateDealerOdds from './bjStats';
+import OddsList from './components/oddsList';
 
 function Blackjack() {
   const [deck, setDeck] = useState([]);
@@ -9,19 +11,29 @@ function Blackjack() {
   const [gameStatus, setGameStatus] = useState('playerMove');
   const [numDecks, setNumDecks] = useState(1);
   const [resetDeckMode, setResetDeckMode] = useState(true);
+  const [showOdds, setShowOdds] = useState(false);
+  const [dealerOdds, setDealerOdds] = useState([]);
 
   const initializeDeck = () => {
     return new Promise(resolve => {
       const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
       const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king', 'ace'];
       let newDeck = [];
-      for(let i = 0; i < numDecks; i++) {
-        newDeck = [...newDeck, ...suits.flatMap(suit => values.map(value => ({side: 'front', suit, value })))];
+  
+      if (resetDeckMode || deck.length === 0) {
+        // Initialize a new deck
+        for(let i = 0; i < numDecks; i++) {
+          newDeck = [...newDeck, ...suits.flatMap(suit => values.map(value => ({ side: 'front', suit, value })))];
+        }
+        setDeck(shuffleDeck(newDeck));
+      } else {
+        // Shuffle the existing deck
+        setDeck(deck);
       }
-      setDeck(shuffleDeck(newDeck));
       resolve();
     });
   };
+  
 
     
   useEffect(() => {
@@ -66,12 +78,14 @@ function Blackjack() {
     setPlayerHand([card1, card2]);
     setDealerHand([card3]);
     setGameStatus('playerMove');
+    setShowOdds(false);
   };
 
   const getTextColor = (value) => {
     if (value === 'player') return 'green';
     return 'red'
   };
+
 
 
   const hit = async () => {
@@ -159,6 +173,14 @@ function Blackjack() {
     initializeGame();
   }
 
+  let counts = new Array(6).fill(0);
+
+  const dealerOddsBtn = () => {
+    setShowOdds(true);
+    const odds = calculateDealerOdds(dealerHand[0], deck);
+    setDealerOdds(odds);
+  };
+
   return (
     <div className="blackjack-game">
       <h1>Blackjack</h1>
@@ -187,10 +209,10 @@ function Blackjack() {
           <label htmlFor="resetDeckMode">Reset Deck each game</label>
         </div>
         {!resetDeckMode && 
-          <div className="reset-deck-button">
-            <p id="numCards">{deck.length} cards left in deck</p>
+        <div className="reset-deck-button">
+            <p id="numCards">{gameStatus==='playerMove' ? deck.length-1 : deck.length} cards left in deck</p>
             <button id="reset-deck-btn" onClick={initializeGame}>Reset Deck</button>
-          </div>
+        </div>
         }
       </div>
   
@@ -222,12 +244,21 @@ function Blackjack() {
           </div>
   
           {gameStatus === 'playerMove' && (
-            <div className="game-controls">
-              <button onClick={() => hit().catch(console.error)}>Hit</button>
-              <button onClick={() => stand().catch(console.error)}>Stand</button>
-            </div>
-          )}
-  
+            <>
+        {showOdds && (
+            <>
+            <p>Dealer odds:</p>
+            <OddsList arr={dealerOdds} />
+            </>
+        )}
+        <div className="game-controls">
+            <button onClick={() => hit().catch(console.error)}>Hit</button>
+            <button onClick={() => stand().catch(console.error)}>Stand</button>
+        {!showOdds && (<button onClick={dealerOddsBtn}>Show Dealer Odds</button>)}
+        {showOdds && (<button onClick={dealerOddsBtn}>Recalculate dealer odds</button>)}
+        </div>
+        </>
+        )}
           {gameStatus === 'over' && (
             <div className="game-over">
               {checkWinner() !== 'tie' &&

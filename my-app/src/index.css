@@ -242,3 +242,118 @@ input:checked + .slider:before {
   color: #2196F3;
   font-weight: bold;
 }
+
+.blackjack-game {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 15px;
+  font-family: Arial, sans-serif;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.game-settings {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.deck-selector,
+.reset-selector,
+.reset-deck-button {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.deck-selector label,
+.reset-selector label {
+  margin-right: 5px;
+}
+
+.deck-selector input {
+  width: 50px;
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.reset-selector {
+  margin-right: 15px;
+}
+
+.reset-selector input {
+  margin-right: 5px;
+}
+
+.reset-deck-button button {
+  padding: 5px 10px;
+  font-size: 14px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.reset-deck-button button:hover {
+  background-color: darkblue;
+}
+
+.reset-deck-button p {
+  margin-right: 10px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.odds-list {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  font-weight: bold;
+  color: #34495e;
+}
+
+.odds-list p {
+  margin: 0;
+  padding: 5px 10px;
+  background-color: #ecf0f1;
+  border-radius: 5px;
+}
+
+.odds-list p.bust {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.game-controls button {
+  margin: 0 5px;
+  padding: 8px 15px;
+  font-size: 14px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.game-controls button:hover {
+  background-color: darkblue;
+}
+
+
