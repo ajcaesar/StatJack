@@ -1,2 +1,2 @@
-# card_analytics
-statistics-based tools to help you in cards
+# StatJack
+Using statistics to calculate odds in blackjack and teach you to think probabilistically. Working on poker version. 
