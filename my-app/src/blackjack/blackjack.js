@@ -39,8 +39,6 @@ function Blackjack() {
     });
   };
   
-
-    
   useEffect(() => {
     initializeDeck();
   }, [numDecks]);
@@ -98,7 +96,49 @@ function Blackjack() {
     setBustOdds([]);
   }
 
+  function probOfStay(dealerArr, playerScore) {
+    let win = dealerArr[dealerArr.length - 1]; //chance of dealer busting 
+    let tie = 0;
+    for(let i=0; i+17 < playerScore; i++) {
+      win += dealerArr[i];
+    }
+    if (playerScore >= 17) { 
+      tie = dealerArr[playerScore - 17];
+    }
+    let lose = 1- (win + tie);
+    return {win, tie, lose};
+  }
 
+  function probOfHit(dealerArr, playerArr) {
+    let winOdds = playerArr[playerArr.length - 2];
+    let tieOdds = 0;
+    let loseOdds = playerArr[playerArr.length -1];
+    console.log('called');
+    console.log('playerArr length: ' + playerArr.length)
+    for(let i = 0; i < playerArr.length - 2; i++) {
+      console.log("i calc: " + i);
+      let {win, tie, lose} = probOfStay(dealerArr, i);
+      winOdds += playerArr[i] * win;
+      tieOdds += playerArr[i] * tie; 
+      loseOdds += playerArr[i] * lose;
+    }
+    return {winOdds, tieOdds, loseOdds};
+  }
+
+  function OddsCalc({dealerArr, playerArr}) {
+    let {winOdds, tieOdds, loseOdds} = probOfHit(dealerArr, playerArr);
+    return(<div className="odds-container"><p className="odds-item odds-win">win: {(winOdds*100).toFixed(0)}%</p>
+    <p className="odds-item odds-tie">tie: {(tieOdds*100).toFixed(0)}%</p>
+    <p className="odds-item odds-lose">lose: {(loseOdds*100).toFixed(0)}%</p></div>)}
+
+  function InitialOddsCalc({dealerArr, playerScore}) {
+    console.log('dealerArr: ' + dealerArr);
+    console.log('playerScore: ' + playerScore);
+    let {win, tie, lose} = probOfStay(dealerArr, playerScore);
+    return(<div className="odds-container"><p className="odds-item odds-win">win: {(win*100).toFixed(0)}%</p>
+    <p className="odds-item odds-tie">tie: {(tie*100).toFixed(0)}%</p>
+    <p className="odds-item odds-lose">lose: {(lose*100).toFixed(0)}%</p></div>);
+  }
 
   const hit = async () => {
     const newCard = await dealCard();
@@ -256,10 +296,13 @@ function Blackjack() {
               ))}
             </div>
             <p>Player Score: {sumValue(playerHand)}</p>
-            
+            {gameStatus === 'playerMove' && dealerHand.length > 0 && (
+          <div>current odds: <InitialOddsCalc key={1} dealerArr={dealerOdds.length > 0 ? dealerOdds : calculateDealerOdds([dealerHand[0]], deck)} playerScore={sumValue(playerHand)}/></div>
+            )}
             {gameStatus ==='playerMove' && (<><button className="numBustsBtn" onClick={updateProbs}>show probabilities after {numBustsShown + 1} hit{numBustsShown > 0 ? 's' : ''}</button>
             {numBustsShown > 0 && (<button className="numBustsBtn" onClick={resetProbs}>clear</button>)}
-            {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hit{index > 0 ? 's' : ''}: </> <HitOddsList key={index} arr={bust}/></div>)}</>)}
+            {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hit{index > 0 ? 's' : ''}: </> {/*<HitOddsList key={index} arr={bust}/>*/}
+            <OddsCalc key={index + 50} dealerArr={dealerOdds.length > 0 ? dealerOdds : calculateDealerOdds([dealerHand[0]], deck)} playerArr={bust}/></div>)}</>)}
           </div>
           <div className="hand dealer-hand">
             <h2>Dealer Hand:</h2>

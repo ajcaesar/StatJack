@@ -375,3 +375,44 @@ input:checked + .slider:before {
 .numBustsBtn:hover {
   background-color: darkblue;
 }
+
+.odds-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.odds-item {
+  margin: 0 10px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: transform 0.3s;
+  margin-bottom: 5px;
+}
+
+.odds-item p {
+  margin: 5px 0;
+  font-size: 12px;
+}
+
+.odds-win {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.odds-tie {
+  background-color: #f1c40f;
+  color: white;
+}
+
+.odds-lose {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.odds-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
