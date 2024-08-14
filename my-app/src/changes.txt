@@ -1,4 +1,2 @@
-changes to be made: 
-probability of busting vs achieving a certain score for the player
-ie if you hit til you get 17 you have an x chance of busting
+create a recursive function where the end case is blackjack or bust and figure out if itd be more favorable to hit or stand
 

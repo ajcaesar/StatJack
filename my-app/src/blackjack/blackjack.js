@@ -18,6 +18,9 @@ function Blackjack() {
   const [dealerOdds, setDealerOdds] = useState([]);
   const [numBustsShown, setNumBustsShown] = useState(0);
   const [bustOdds, setBustOdds] = useState([]);
+  const [wins, setWins] = useState(0);
+  const [losses, setLosses] = useState(0);
+  const [winner, setWinner] = useState('neither');
 
   const initializeDeck = () => {
     return new Promise(resolve => {
@@ -25,7 +28,7 @@ function Blackjack() {
       const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king', 'ace'];
       let newDeck = [];
   
-      if (resetDeckMode || deck.length >=10) {
+      if (resetDeckMode || deck.length <=10) {
         // Initialize a new deck
         for(let i = 0; i < numDecks; i++) {
           newDeck = [...newDeck, ...suits.flatMap(suit => values.map(value => ({ side: 'front', suit, value })))];
@@ -45,6 +48,7 @@ function Blackjack() {
 
   useEffect(() => {
     if (sumValue(playerHand) >= 21) {
+      setWinner(checkWinner());
       setGameStatus('over');
     }
   }, [playerHand]);
@@ -86,6 +90,11 @@ function Blackjack() {
     setBustOdds([]);
   };
 
+  const resetWins = () => {
+    setWins(0);
+    setLosses(0);
+  }
+
   const getTextColor = (value) => {
     if (value === 'player') return 'green';
     return 'red'
@@ -97,26 +106,32 @@ function Blackjack() {
   }
 
   function probOfStay(dealerArr, playerScore) {
+    if (playerScore === 21) {
+      let win =1;
+      let tie = 0; 
+      let lose = 0;
+      return {win, tie, lose};
+    }
     let win = dealerArr[dealerArr.length - 1]; //chance of dealer busting 
     let tie = 0;
+    let lose = 0;
     for(let i=0; i+17 < playerScore; i++) {
       win += dealerArr[i];
     }
-    if (playerScore >= 17) { 
+    for (let z=4; z + 17 > playerScore && z >= 0; z--)   {
+      lose += dealerArr[z];
+    }
+    if (playerScore-17 >= 0 ) { 
       tie = dealerArr[playerScore - 17];
     }
-    let lose = 1- (win + tie);
     return {win, tie, lose};
   }
 
   function probOfHit(dealerArr, playerArr) {
-    let winOdds = playerArr[playerArr.length - 2];
+    let winOdds = playerArr[playerArr.length - 2] // + dealerArr[dealerArr.length - 1] * (1-playerArr[playerArr.length - 1]);
     let tieOdds = 0;
-    let loseOdds = playerArr[playerArr.length -1];
-    console.log('called');
-    console.log('playerArr length: ' + playerArr.length)
+    let loseOdds = playerArr[playerArr.length - 1];
     for(let i = 0; i < playerArr.length - 2; i++) {
-      console.log("i calc: " + i);
       let {win, tie, lose} = probOfStay(dealerArr, i);
       winOdds += playerArr[i] * win;
       tieOdds += playerArr[i] * tie; 
@@ -132,8 +147,6 @@ function Blackjack() {
     <p className="odds-item odds-lose">lose: {(loseOdds*100).toFixed(0)}%</p></div>)}
 
   function InitialOddsCalc({dealerArr, playerScore}) {
-    console.log('dealerArr: ' + dealerArr);
-    console.log('playerScore: ' + playerScore);
     let {win, tie, lose} = probOfStay(dealerArr, playerScore);
     return(<div className="odds-container"><p className="odds-item odds-win">win: {(win*100).toFixed(0)}%</p>
     <p className="odds-item odds-tie">tie: {(tie*100).toFixed(0)}%</p>
@@ -142,8 +155,12 @@ function Blackjack() {
 
   const hit = async () => {
     const newCard = await dealCard();
-    setPlayerHand(prevHand => [...prevHand, newCard]);
-    setBustOdds(fillOdds);
+    setPlayerHand(prevHand => {
+      const updatedHand = [...prevHand, newCard];
+      // Calculate bust odds here, after the hand has been updated
+      setBustOdds(fillOdds(updatedHand));
+      return updatedHand;
+    });
   };
 
   const fillOdds = () => { 
@@ -202,24 +219,31 @@ function Blackjack() {
 
   const checkWinner = () => {
     if (checkPlayerBust()) {
+      setLosses(losses + 1);
       return 'dealer';
     }
     if (checkDealerBust()) {
+      setWins(wins + 1);
       return 'player';
     }
     if (sumValue(playerHand) > sumValue(dealerHand)) {
+      setWins(wins + 1);
       return 'player';
     }
     if (sumValue(playerHand) < sumValue(dealerHand)) {
+      setLosses(losses + 1);
       return 'dealer';
     }
     return 'tie';
-  }
-
+  };
+  
   const stand = async () => {
     await dealerHit();
+    const gameResult = checkWinner();
+    setWinner(gameResult);
     setGameStatus('over');
   };
+  
 
   function capitalizeFirstLetter(str) {
     if (!str) return ''; // Return an empty string if input is empty
@@ -281,6 +305,9 @@ function Blackjack() {
         </div>
         }
       </div>
+      <div className='wins-counter'><p className='wins'>wins: {wins}</p>
+      <p className='losses'>losses: {losses}</p><button onClick={resetWins}>reset wins</button></div>
+      
   
       {gameStatus === 'idle' && (
         <button onClick={initializeGame}>Start Game</button>
@@ -301,7 +328,7 @@ function Blackjack() {
             )}
             {gameStatus ==='playerMove' && (<><button className="numBustsBtn" onClick={updateProbs}>show probabilities after {numBustsShown + 1} hit{numBustsShown > 0 ? 's' : ''}</button>
             {numBustsShown > 0 && (<button className="numBustsBtn" onClick={resetProbs}>clear</button>)}
-            {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hit{index > 0 ? 's' : ''}: </> {/*<HitOddsList key={index} arr={bust}/>*/}
+            {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hit{index > 0 ? 's' : ''}: </> <HitOddsList key={index} arr={bust}/>
             <OddsCalc key={index + 50} dealerArr={dealerOdds.length > 0 ? dealerOdds : calculateDealerOdds([dealerHand[0]], deck)} playerArr={bust}/></div>)}</>)}
           </div>
           <div className="hand dealer-hand">
@@ -332,15 +359,15 @@ function Blackjack() {
         </div>
         </>
         )}
-          {gameStatus === 'over' && (
-            <div className="game-over">
-              {checkWinner() !== 'tie' &&
-              <h2 style={{ color: getTextColor(checkWinner()) }}>{capitalizeFirstLetter(checkWinner())} Wins!</h2>}
-              {checkWinner() === 'tie' && 
-              <h2 style={{ color: 'blue' }}>Push!</h2>}
-              <button onClick={initializeGame}>Play Again</button>
-            </div>
-          )}
+        {gameStatus === 'over' && (
+          <div className="game-over">
+            {winner !== 'tie' &&
+            <h2 style={{ color: getTextColor(winner) }}>{capitalizeFirstLetter(winner)} Wins!</h2>}
+            {winner === 'tie' && 
+            <h2 style={{ color: 'blue' }}>Push!</h2>}
+            <button onClick={initializeGame}>Play Again</button>
+          </div>
+        )}
         </div>
       )}
     </div>

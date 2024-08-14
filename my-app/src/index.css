@@ -387,14 +387,13 @@ input:checked + .slider:before {
   text-align: center;
   padding: 10px;
   border-radius: 5px;
-  font-weight: bold;
   transition: transform 0.3s;
   margin-bottom: 5px;
 }
 
 .odds-item p {
   margin: 5px 0;
-  font-size: 12px;
+  font-size: 10px;
 }
 
 .odds-win {
@@ -415,4 +414,46 @@ input:checked + .slider:before {
 .odds-item:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.wins-counter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin: 20px 0;
+  padding: 10px;
+  background-color: #ecf0f1;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.wins-counter p {
+  font-size: 18px;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.wins-counter .wins {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.wins-counter .losses {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.wins-counter button {
+  padding: 8px 15px;
+  font-size: 14px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.wins-counter button:hover {
+  background-color: darkblue;
 }
