@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/StatJack/static/css/main.e0f61276.css",
-    "main.js": "/StatJack/static/js/main.be4d04d1.js",
+    "main.js": "/StatJack/static/js/main.20b9132a.js",
     "static/js/510.75e74c4a.chunk.js": "/StatJack/static/js/510.75e74c4a.chunk.js",
     "static/media/castle.svg": "/StatJack/static/media/castle.ee65ea00.svg",
     "static/media/clubs_jack.svg": "/StatJack/static/media/clubs_jack.9dc08cee.svg",
@@ -58,11 +58,11 @@
     "static/media/diamonds_ace.svg": "/StatJack/static/media/diamonds_ace.548007a6.svg",
     "index.html": "/StatJack/index.html",
     "main.e0f61276.css.map": "/StatJack/static/css/main.e0f61276.css.map",
-    "main.be4d04d1.js.map": "/StatJack/static/js/main.be4d04d1.js.map",
+    "main.20b9132a.js.map": "/StatJack/static/js/main.20b9132a.js.map",
     "510.75e74c4a.chunk.js.map": "/StatJack/static/js/510.75e74c4a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e0f61276.css",
-    "static/js/main.be4d04d1.js"
+    "static/js/main.20b9132a.js"
   ]
 }
