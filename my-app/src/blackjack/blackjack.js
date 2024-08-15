@@ -182,24 +182,43 @@ function Blackjack() {
     <p className="odds-item odds-lose">lose: {(lose*100).toFixed(0)}%</p></div>);
   }
   
+  // const hit = async () => {
+  //   const newCard = await dealCard();
+  //   let uHand;
+  //   await setPlayerHand(prevHand => {
+  //     const updatedHand = [...prevHand, newCard];
+  //     uHand = updatedHand;
+  //     // Recalculate dealer odds if needed
+  //     // const updatedDealerOdds = calculateDealerOdds([dealerHand[0]], deck);
+  //     // setDealerOdds(updatedDealerOdds);
+  //     setBustOdds(fillOdds(updatedHand));
+  //   });
+  //   return uHand;
+  // };
   const hit = async () => {
     const newCard = await dealCard();
-    setPlayerHand(prevHand => {
-      const updatedHand = [...prevHand, newCard];
-      // Recalculate dealer odds if needed
-      // const updatedDealerOdds = calculateDealerOdds([dealerHand[0]], deck);
-      // setDealerOdds(updatedDealerOdds);
-      setBustOdds(fillOdds(updatedHand));
-      return updatedHand;
+    return new Promise(resolve => {
+      setPlayerHand(prevHand => {
+        const updatedHand = [...prevHand, newCard];
+        setBustOdds(fillOdds(updatedHand));  // Update bust odds if needed
+        resolve(updatedHand);  // Resolve with the updated hand
+        return updatedHand;
+      });
     });
   };
+  
+
+  const doubleDown = async () => {
+    let pHand = await hit();
+    console.log(pHand.length);
+    let r = stand(pHand, 2);
+  }
+
+
 
   useEffect(() => {
     if (gameStatus === 'playerMove' && playerHand.length > 0) {
       setBustOdds(fillOdds(playerHand));
-      // const odds = calculatePlayerOdds(playerHand, deck, numBustsShown + 1);
-      // setBustOdds(prev => [...prev, odds]);
-      // setNumBustsShown(prev => prev + 1);
     }
   }, [playerHand]);
   
@@ -263,50 +282,90 @@ function Blackjack() {
     return (sumValue(dlr) > 21);
   }
 
-  const checkWinner = (dlr=null) => {
-    if (dlr) {
-      if (checkPlayerBust()) {
-        setLosses(losses + 1);
+  const checkWinner = (dlr=null, pHand=null, weight=1) => {
+    if (dlr && pHand) {
+      if (checkBust(pHand)) {
+        setLosses(losses + weight);
         return 'dealer';
       }
       if (checkBust(dlr)) {
-        setWins(wins + 1);
+        setWins(wins + weight);
         return 'player';
       }
-      if (sumValue(playerHand) > sumValue(dlr)) {
-        setWins(wins + 1);
+      if (sumValue(pHand) > sumValue(dlr)) {
+        setWins(wins + weight);
         return 'player';
       }
-      if (sumValue(playerHand) < sumValue(dlr)) {
-        setLosses(losses + 1);
+      if (sumValue(pHand) < sumValue(dlr)) {
+        setLosses(losses + weight);
         return 'dealer';
       }
       return 'tie';
     }
+    if (dlr) {
+      if (checkPlayerBust()) {
+        setLosses(losses + weight);
+        return 'dealer';
+      }
+      if (checkBust(dlr)) {
+        setWins(wins + weight);
+        return 'player';
+      }
+      if (sumValue(playerHand) > sumValue(dlr)) {
+        setWins(wins + weight);
+        return 'player';
+      }
+      if (sumValue(playerHand) < sumValue(dlr)) {
+        setLosses(losses + weight);
+        return 'dealer';
+      }
+      return 'tie';
+    }
+    if (pHand) {
+      if (checkBust(pHand)) {
+        setLosses(losses + weight);
+        return 'dealer';
+      }
+      if (checkBust(dealerHand)) {
+        setWins(wins + weight);
+        return 'player';
+      }
+      if (sumValue(pHand) > sumValue(dealerHand)) {
+        setWins(wins + weight);
+        return 'player';
+      }
+      if (sumValue(pHand) < sumValue(dealerHand)) {
+        setLosses(losses + weight);
+        return 'dealer';
+      }
+      return 'tie';
+
+    }
     if (checkPlayerBust()) {
-      setLosses(losses + 1);
+      setLosses(losses + weight);
       return 'dealer';
     }
     if (checkDealerBust()) {
-      setWins(wins + 1);
+      setWins(wins + weight);
       return 'player';
     }
     if (sumValue(playerHand) > sumValue(dealerHand)) {
-      setWins(wins + 1);
+      setWins(wins + weight);
       return 'player';
     }
     if (sumValue(playerHand) < sumValue(dealerHand)) {
-      setLosses(losses + 1);
+      setLosses(losses + weight);
       return 'dealer';
     }
     return 'tie';
   };
   
-  const stand = async () => {
+  const stand = async (pHand=null, weight=1) => {
     const dlr = await dealerHit();
-    const gameResult = checkWinner(dlr);
+    const gameResult = checkWinner(dlr, pHand, weight);
     setWinner(gameResult);
     setGameStatus('over');
+    return gameResult;
   };
   
 
@@ -403,7 +462,7 @@ function Blackjack() {
                   {index + 1} hit{index > 0 ? 's' : ''}: 
                   <OddsCalc key={index + 50} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerArr={bust} />
                   <button onClick={() => toggleHitOddsList(index)}>
-                    {hitOddsVisibility[index] ? 'Hide Details' : 'Show Details'}
+                    {hitOddsVisibility[index] ? 'Hide' : 'Details'}
                   </button>
                   <div style={{ display: hitOddsVisibility[index] ? 'block' : 'none' }}>
                     <HitOddsList key={index} arr={bust} />
@@ -435,6 +494,7 @@ function Blackjack() {
         <div className="game-controls">
             <button onClick={() => hit().catch(console.error)}>Hit</button>
             <button onClick={() => stand().catch(console.error)}>Stand</button>
+            <button onClick={doubleDown}>Double Down</button>
         {!showOdds && (<button onClick={dealerOddsBtn}>Show Dealer Odds</button>)}
         {showOdds && (<button onClick={dealerOddsBtn}>Recalculate dealer odds</button>)}
         <button onClick={initializeGame}>Restart</button>
