@@ -209,6 +209,9 @@ function Blackjack() {
     });
   };
   
+  useEffect(() => {
+    console.log('dealerHand updated: ' + dealerHand.length);
+  }, [dealerHand]);
 
   const fillOdds = (updatedHand) => { 
     let arr = [];
@@ -224,7 +227,8 @@ function Blackjack() {
       const newCard = await dealCard();
       currentHand.push(newCard);
     }
-    setDealerHand(currentHand);
+    await setDealerHand(currentHand);
+    return currentHand;
   };
 
   const sumValue = (hand) => {
@@ -264,7 +268,30 @@ function Blackjack() {
     return sumValue(dealerHand) > 21;
   }
 
-  const checkWinner = () => {
+  const checkBust = (dlr) => {
+    return (sumValue(dlr) > 21);
+  }
+
+  const checkWinner = (dlr=null) => {
+    if (dlr) {
+      if (checkPlayerBust()) {
+        setLosses(losses + 1);
+        return 'dealer';
+      }
+      if (checkBust(dlr)) {
+        setWins(wins + 1);
+        return 'player';
+      }
+      if (sumValue(playerHand) > sumValue(dlr)) {
+        setWins(wins + 1);
+        return 'player';
+      }
+      if (sumValue(playerHand) < sumValue(dlr)) {
+        setLosses(losses + 1);
+        return 'dealer';
+      }
+      return 'tie';
+    }
     if (checkPlayerBust()) {
       setLosses(losses + 1);
       return 'dealer';
@@ -285,8 +312,11 @@ function Blackjack() {
   };
   
   const stand = async () => {
-    await dealerHit();
-    const gameResult = checkWinner();
+    const dlr = await dealerHit();
+    const gameResult = checkWinner(dlr);
+    console.log(sumValue(playerHand));
+    console.log(sumValue(dealerHand));
+    console.log(gameResult);
     setWinner(gameResult);
     setGameStatus('over');
   };
