@@ -483,3 +483,17 @@ input:checked + .slider:before {
 #check-btn:hover {
   background-color: darkblue;
 }
+
+#curr-odds, .future-odds {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 18px; /* Reduced font size */
+}
+
+#curr-odds-container {
+  margin: 10px;
+}
+
+.future-odds {
+  margin: 5px;
+}

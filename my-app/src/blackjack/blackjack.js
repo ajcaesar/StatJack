@@ -459,11 +459,11 @@ function Blackjack() {
             </div>
             {/* <p>Player Score: {sumValue(playerHand)}</p> */}
             {gameStatus === 'playerMove' && dealerHand.length > 0 && (
-              <div>
-                Current odds: <InitialOddsCalc key={1} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerScore={sumValue(playerHand)} />
+              <div id="curr-odds-container">
+                <span id="curr-odds">Current Odds: </span><InitialOddsCalc key={1} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerScore={sumValue(playerHand)} />
               </div>
             )}
-            {gameStatus ==='playerMove' && (<><button className="numBustsBtn" onClick={updateProbs}>show probabilities after {numBustsShown + 1} hit{numBustsShown > 0 ? 's' : ''}</button>
+            {gameStatus ==='playerMove' && (<><button className="numBustsBtn" onClick={updateProbs}>show odds after {numBustsShown + 1} hit{numBustsShown > 0 ? 's' : ''}</button>
             {numBustsShown > 0 && (<button className="numBustsBtn" onClick={resetProbs}>clear</button>)}
             {/* {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hit{index > 0 ? 's' : ''}: </>
             <OddsCalc key={index + 50} dealerArr={dealerOdds} playerArr={bust}/>
@@ -472,7 +472,7 @@ function Blackjack() {
 
             {bustOdds.map((bust, index) => (
                 <div id='numBusts' key={index}>
-                  {index + 1} hit{index > 0 ? 's' : ''}: 
+                  <span className="future-odds">Odds After {index + 1} hit{index > 0 ? 's' : ''}:</span>
                   <OddsCalc key={index + 50} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerArr={bust} />
                   <button id="check-btn" onClick={() => toggleHitOddsList(index)}>
                     {hitOddsVisibility[index] ? 'Hide' : 'Details'}
@@ -500,7 +500,7 @@ function Blackjack() {
             <>
         {showOdds && (
             <>
-            <p>Dealer odds:</p>
+            <div className="future-odds">Dealer Odds:</div>
             <OddsList arr={dealerOdds} />
             </>
         )}
@@ -511,7 +511,7 @@ function Blackjack() {
             {gameStatus ==='playerMove' && playerHand.length === 2 && (<><button onClick={doubleDown}>Double Down</button>
             <button onClick={surrender}>Surrender</button></>)}
         {!showOdds && (<button onClick={dealerOddsBtn}>Show Dealer Odds</button>)}
-        {showOdds && (<button onClick={dealerOddsBtn}>Recalculate dealer odds</button>)}
+        {showOdds && (<button onClick={dealerOddsBtn}>Recalculate Dealer Odds</button>)}
         <button onClick={() => initializeGame()}>Restart</button>
         </div>
         </>
