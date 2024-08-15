@@ -54,10 +54,10 @@ function Blackjack() {
     localStorage.setItem('losses', losses);
   }, [losses]);
 
-  // useEffect(() => {
-  //   if(dealerHand[0] && deck) {
-  //   setDealerOdds(calculateDealerOdds([dealerHand[0]], deck));
-  // }}, [deck]);
+  useEffect(() => {
+    if(dealerHand[0] && deck) {
+    setDealerOdds(calculateDealerOdds([dealerHand[0]], deck));
+  }}, [deck]);
   
   useEffect(() => {
     initializeDeck();
@@ -500,8 +500,9 @@ function Blackjack() {
         <div className="game-controls">
             <button onClick={() => hit().catch(console.error)}>Hit</button>
             <button onClick={() => stand().catch(console.error)}>Stand</button>
-            <button onClick={doubleDown}>Double Down</button>
-            <button onClick={surrender}>Surrender</button>
+            
+            {gameStatus ==='playerMove' && playerHand.length === 2 && (<><button onClick={doubleDown}>Double Down</button>
+            <button onClick={surrender}>Surrender</button></>)}
         {!showOdds && (<button onClick={dealerOddsBtn}>Show Dealer Odds</button>)}
         {showOdds && (<button onClick={dealerOddsBtn}>Recalculate dealer odds</button>)}
         <button onClick={initializeGame}>Restart</button>

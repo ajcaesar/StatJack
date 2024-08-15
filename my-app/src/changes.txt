@@ -1,2 +1,4 @@
 create a recursive function where the end case is blackjack or bust and figure out if itd be more favorable to hit or stand
-
+be able to give them a suggestion with a percentage
+add in split 
+suggestion between hit, stand, split, DD, surrender
