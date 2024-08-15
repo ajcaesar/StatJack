@@ -457,3 +457,29 @@ input:checked + .slider:before {
 .wins-counter button:hover {
   background-color: darkblue;
 }
+
+#dScore {
+  margin-top: 5px;
+}
+
+#titlePage {
+  margin-top: 10px;
+}
+
+#check-btn {
+  background-color: #3498db;
+  color: white;
+  padding: 6px 10px;
+  font-size: 14px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 5px;
+}
+
+#check-btn:hover {
+  background-color: darkblue;
+}

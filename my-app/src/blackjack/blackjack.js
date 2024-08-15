@@ -21,6 +21,7 @@ function Blackjack() {
   const [losses, setLosses] = useState(() => parseInt(localStorage.getItem('losses')) || 0);
   const [winner, setWinner] = useState('neither');
   const [hitOddsVisibility, setHitOddsVisibility] = useState({});
+  
 
   const toggleHitOddsList = (index) => {
       setHitOddsVisibility(prevVisibility => ({
@@ -29,12 +30,12 @@ function Blackjack() {
       }));
   };
 
-  const initializeDeck = () => {
+  const initializeDeck = (override=false) => {
       const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
       const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king', 'ace'];
       let newDeck = [];
   
-      if (resetDeckMode || deck.length <=10) {
+      if (resetDeckMode || deck.length <= 10 || override) {
         for(let i = 0; i < numDecks; i++) {
           newDeck = [...newDeck, ...suits.flatMap(suit => values.map(value => ({ side: 'front', suit, value })))];
         }
@@ -92,9 +93,10 @@ function Blackjack() {
     });
   };
 
-  const initializeGame = async () => {
+  const initializeGame = async (override=false) => {
+    // console.log('or: ' + override);
     setGameStatus('idle');
-    initializeDeck();
+    initializeDeck(override);
     const card1 = await dealCard();
     const card2 = await dealCard();
     const card3 = await dealCard();
@@ -210,7 +212,7 @@ function Blackjack() {
 
   const doubleDown = async () => {
     let pHand = await hit();
-    console.log(pHand.length);
+    // console.log(pHand.length);
     let r = stand(pHand, 2);
   }
 
@@ -380,12 +382,13 @@ function Blackjack() {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  const handleNumDecksChange = (event) => {
+  const handleNumDecksChange = async (event) => {
     const value = parseInt(event.target.value, 10);
     if (value >= 1 && value <= 10) {
-      setNumDecks(value);
+      await setNumDecks(value);
     }
     initializeGame();
+    resetDeckBtn();
   };
 
   const resetDeckModeChange = (event) => {
@@ -399,9 +402,13 @@ function Blackjack() {
     setDealerOdds(odds);
   };
 
+  const resetDeckBtn = () => {
+    initializeGame(true);
+  }
+
   return (
     <div className="blackjack-game">
-      <h1>Blackjack</h1>
+      <h1 id="titlePage">StatJack</h1>
       
       <div className="game-settings">
         <div className="deck-selector">
@@ -429,7 +436,7 @@ function Blackjack() {
         {!resetDeckMode && 
         <div className="reset-deck-button">
             <p id="numCards">{gameStatus==='playerMove' ? deck.length-1 : deck.length} cards left in deck</p>
-            <button id="reset-deck-btn" onClick={initializeGame}>Reset Deck</button>
+            <button id="reset-deck-btn" onClick={resetDeckBtn}>Reset Deck</button>
         </div>
         }
       </div>
@@ -438,19 +445,19 @@ function Blackjack() {
       
   
       {gameStatus === 'idle' && (
-        <button onClick={initializeGame}>Start Game</button>
+        <button onClick={() => initializeGame()}>Start Game</button>
       )}
   
       {(gameStatus === 'playerMove' || gameStatus === 'over') && (
         <div className="game-area">
           <div className="hand player-hand">
-            <h2>Player Hand:</h2>
+            <h2>Player Score: {sumValue(playerHand)}</h2>
             <div className="cards">
               {playerHand.map((card, index) => (
                 <Card key={index} side={card.side} suit={card.suit} value={card.value} />
               ))}
             </div>
-            <p>Player Score: {sumValue(playerHand)}</p>
+            {/* <p>Player Score: {sumValue(playerHand)}</p> */}
             {gameStatus === 'playerMove' && dealerHand.length > 0 && (
               <div>
                 Current odds: <InitialOddsCalc key={1} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerScore={sumValue(playerHand)} />
@@ -467,7 +474,7 @@ function Blackjack() {
                 <div id='numBusts' key={index}>
                   {index + 1} hit{index > 0 ? 's' : ''}: 
                   <OddsCalc key={index + 50} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerArr={bust} />
-                  <button onClick={() => toggleHitOddsList(index)}>
+                  <button id="check-btn" onClick={() => toggleHitOddsList(index)}>
                     {hitOddsVisibility[index] ? 'Hide' : 'Details'}
                   </button>
                   <div style={{ display: hitOddsVisibility[index] ? 'block' : 'none' }}>
@@ -479,14 +486,14 @@ function Blackjack() {
 
           </div>
           <div className="hand dealer-hand">
-            <h2>Dealer Hand:</h2>
+            <h2 id="dScore">Dealer Score: {gameStatus === 'over' ? sumValue(dealerHand) : '?'}</h2>
             <div className="cards">
               {dealerHand.map((card, index) => (
                 <Card key={index} side={card.side} suit={card.suit} value={card.value} />
               ))}
               {dealerHand.length === 1 && <Card key={1} side={'back'} suit={null} value={null} />}
             </div>
-            <p>Dealer Score: {gameStatus === 'over' ? sumValue(dealerHand) : '?'}</p>
+            {/* <p>Dealer Score: {gameStatus === 'over' ? sumValue(dealerHand) : '?'}</p> */}
           </div>
   
           {gameStatus === 'playerMove' && (
@@ -505,17 +512,17 @@ function Blackjack() {
             <button onClick={surrender}>Surrender</button></>)}
         {!showOdds && (<button onClick={dealerOddsBtn}>Show Dealer Odds</button>)}
         {showOdds && (<button onClick={dealerOddsBtn}>Recalculate dealer odds</button>)}
-        <button onClick={initializeGame}>Restart</button>
+        <button onClick={() => initializeGame()}>Restart</button>
         </div>
         </>
         )}
         {gameStatus === 'over' && (
           <div className="game-over">
             {winner !== 'tie' &&
-            <h2 style={{ color: getTextColor(winner) }}>{capitalizeFirstLetter(winner)} Wins!</h2>}
+            <h2 id="dScore" style={{ color: getTextColor(winner) }}>{capitalizeFirstLetter(winner)} Wins!</h2>}
             {winner === 'tie' && 
             <h2 style={{ color: 'blue' }}>Push!</h2>}
-            <button onClick={initializeGame}>Play Again</button>
+            <button onClick={() => initializeGame()}>Play Again</button>
           </div>
         )}
         </div>
