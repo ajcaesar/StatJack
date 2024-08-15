@@ -214,6 +214,12 @@ function Blackjack() {
     let r = stand(pHand, 2);
   }
 
+  const surrender = () => {
+    setLosses(losses + .5);
+    setWinner('dealer');
+    setGameStatus('over');
+  }
+
 
 
   useEffect(() => {
@@ -495,6 +501,7 @@ function Blackjack() {
             <button onClick={() => hit().catch(console.error)}>Hit</button>
             <button onClick={() => stand().catch(console.error)}>Stand</button>
             <button onClick={doubleDown}>Double Down</button>
+            <button onClick={surrender}>Surrender</button>
         {!showOdds && (<button onClick={dealerOddsBtn}>Show Dealer Odds</button>)}
         {showOdds && (<button onClick={dealerOddsBtn}>Recalculate dealer odds</button>)}
         <button onClick={initializeGame}>Restart</button>
