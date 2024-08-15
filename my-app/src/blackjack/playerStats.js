@@ -1,4 +1,6 @@
 const calculatePlayerOdds = (cards, deck, numTimes) => {
+    console.log(cards[0].value);
+    console.log(deck.length);
     const len = deck.length;
     const conversion = {
         'ace': 1,

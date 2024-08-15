@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import Blackjack from './blackjack/blackjack'
+import Blackjack2 from './blackjack/blackjack2';
 import Poker from './poker/poker'
 
 function App() {
