@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import Blackjack from './blackjack/blackjack'
 import Poker from './poker/poker'
+import Blackjack2 from './blackjack/blackjack2';
 
 function App() {
   const [isBlackjack, setIsBlackjack] = useState(true);

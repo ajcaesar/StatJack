@@ -381,11 +381,11 @@ function Blackjack() {
             <OddsList arr={dealerOdds} />
             </>
         )}
+        {!showOdds && (<button onClick={dealerOddsBtn}>Show Dealer Odds</button>)}
+        {showOdds && (<button onClick={dealerOddsBtn}>Recalculate dealer odds</button>)}
         <div className="game-controls">
             <button onClick={() => hit().catch(console.error)}>Hit</button>
             <button onClick={() => stand().catch(console.error)}>Stand</button>
-        {!showOdds && (<button onClick={dealerOddsBtn}>Show Dealer Odds</button>)}
-        {showOdds && (<button onClick={dealerOddsBtn}>Recalculate dealer odds</button>)}
         <button onClick={initializeGame}>Restart</button>
         </div>
         </>
