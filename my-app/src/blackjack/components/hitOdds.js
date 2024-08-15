@@ -5,7 +5,7 @@ function HitOddsList({ arr }) {
     <div className="odds-list">
       {arr.map((value, i) => (value >= 0.005 ? 
         <p key={i} className={i === 21 ? 'bust' : ''}>
-          {i === 21 ? 'Bust' : `${i + 1}`}: {(value * 100).toFixed(2)}%
+          {i === 21 ? 'Bust' : `${i + 1}`}: {(value * 100).toFixed(0)}%
         </p> : null
       ))}
     </div>

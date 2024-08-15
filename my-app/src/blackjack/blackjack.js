@@ -22,6 +22,17 @@ function Blackjack() {
   const [losses, setLosses] = useState(() => parseInt(localStorage.getItem('losses')) || 0);
   const [winner, setWinner] = useState('neither');
 
+    // State to manage visibility of each HitOddsList instance
+  const [hitOddsVisibility, setHitOddsVisibility] = useState({});
+
+    // Toggle function to show/hide HitOddsList by index
+    const toggleHitOddsList = (index) => {
+      setHitOddsVisibility(prevVisibility => ({
+        ...prevVisibility,
+        [index]: !prevVisibility[index] // Toggle visibility
+      }));
+    };
+
   const initializeDeck = () => {
     return new Promise(resolve => {
       const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
@@ -49,8 +60,16 @@ function Blackjack() {
   useEffect(() => {
     localStorage.setItem('losses', losses);
   }, [losses]);
-  
 
+  useEffect(() => {
+    localStorage.setItem('losses', losses);
+  }, [losses]);
+
+  useEffect(() => {
+    if(dealerHand[0] && deck) {
+    setDealerOdds(calculateDealerOdds([dealerHand[0]], deck));
+  }}, [deck]);
+  
   useEffect(() => {
     initializeDeck();
   }, [numDecks]);
@@ -97,6 +116,9 @@ function Blackjack() {
     setShowOdds(false);
     setNumBustsShown(0);
     setBustOdds([]);
+
+    const newDealerOdds = calculateDealerOdds([card3], deck);
+    setDealerOdds(newDealerOdds);
   };
 
   const resetWins = () => {
@@ -174,16 +196,19 @@ function Blackjack() {
     <p className="odds-item odds-tie">tie: {(tie*100).toFixed(0)}%</p>
     <p className="odds-item odds-lose">lose: {(lose*100).toFixed(0)}%</p></div>);
   }
-
+  
   const hit = async () => {
     const newCard = await dealCard();
     setPlayerHand(prevHand => {
       const updatedHand = [...prevHand, newCard];
-      // Calculate bust odds here, after the hand has been updated
+      // Recalculate dealer odds if needed
+      const updatedDealerOdds = calculateDealerOdds([dealerHand[0]], deck);
+      setDealerOdds(updatedDealerOdds);
       setBustOdds(fillOdds(updatedHand));
       return updatedHand;
     });
   };
+  
 
   const fillOdds = (updatedHand) => { 
     let arr = [];
@@ -192,15 +217,6 @@ function Blackjack() {
     }
     return arr;
   };
-
-  useEffect(() => {
-    if (gameStatus === 'playerMove' && playerHand.length > 0) {
-      setBustOdds(fillOdds(playerHand));
-      const odds = calculatePlayerOdds(playerHand, deck, numBustsShown + 1);
-      setBustOdds(prev => [...prev, odds]);
-      setNumBustsShown(prev => prev + 1);
-    }
-  }, [playerHand]);
 
   const dealerHit = async () => {
     let currentHand = [...dealerHand];
@@ -359,8 +375,25 @@ function Blackjack() {
             )}
             {gameStatus ==='playerMove' && (<><button className="numBustsBtn" onClick={updateProbs}>show probabilities after {numBustsShown + 1} hit{numBustsShown > 0 ? 's' : ''}</button>
             {numBustsShown > 0 && (<button className="numBustsBtn" onClick={resetProbs}>clear</button>)}
-            {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hit{index > 0 ? 's' : ''}: </> <HitOddsList key={index} arr={bust}/>
-            <OddsCalc key={index + 50} dealerArr={dealerOdds.length > 0 ? dealerOdds : calculateDealerOdds([dealerHand[0]], deck)} playerArr={bust}/></div>)}</>)}
+            {/* {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hit{index > 0 ? 's' : ''}: </>
+            <OddsCalc key={index + 50} dealerArr={dealerOdds} playerArr={bust}/>
+            <HitOddsList  key={index} arr={bust}/>
+            </div>)} */}
+
+            {bustOdds.map((bust, index) => (
+                <div id='numBusts' key={index}>
+                  {index + 1} hit{index > 0 ? 's' : ''}: 
+                  <OddsCalc key={index + 50} dealerArr={dealerOdds} playerArr={bust} />
+                  <button onClick={() => toggleHitOddsList(index)}>
+                    {hitOddsVisibility[index] ? 'Hide Details' : 'Show Details'}
+                  </button>
+                  <div style={{ display: hitOddsVisibility[index] ? 'block' : 'none' }}>
+                    <HitOddsList key={index} arr={bust} />
+                  </div>
+                </div>
+              ))}
+            </>)}
+
           </div>
           <div className="hand dealer-hand">
             <h2>Dealer Hand:</h2>
