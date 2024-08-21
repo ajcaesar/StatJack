@@ -224,6 +224,8 @@ function Blackjack() {
         const updatedHand = [...prevHand, newCard];
         setBustOdds(fillOdds(updatedHand));  // Update bust odds if needed
         resolve(updatedHand);  // Resolve with the updated hand
+        setPlayerGuess(false);
+        setIsCorrectGuess("NA")
         return updatedHand;
       });
     });
