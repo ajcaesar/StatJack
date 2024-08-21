@@ -496,7 +496,8 @@ input:checked + .slider:before {
 }
 
 #curr-odds-container {
-  margin: 10px;
+  margin: 0px;
+  margin-top: 3px;
 }
 
 .future-odds {
@@ -532,7 +533,11 @@ input:checked + .slider:before {
   background-color: #ecf0f1;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 95%;
+}
 
+.quiz-mode-container h2 {
+  font-size: 20px;
 }
 
 #hitGuessBtn, #standGuessBtn, #resetGuessScoreBtn{
@@ -574,7 +579,7 @@ input:checked + .slider:before {
 }
 
 .quiz-mode-container h2 {
-  margin-bottom: 5px;
+  margin-bottom: 0px;
 }
 
 /* .quiz-mode-conttainer HitOddsList.darkgrayodds{
@@ -582,4 +587,7 @@ input:checked + .slider:before {
 } */
 
 
+#nonetype { 
+  display: none;
+}
 

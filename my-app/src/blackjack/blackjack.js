@@ -538,6 +538,7 @@ function Blackjack() {
               ))}
             </div>
             {/* <p>Player Score: {sumValue(playerHand)}</p> */}
+            <div id="nonetype">
             {!quizMode && (
             <div>
             {gameStatus === 'playerMove' && dealerHand.length > 0 && (
@@ -575,7 +576,7 @@ function Blackjack() {
               {gameStatus ==='playerMove' && (
               <>
               {!playerGuess && (<>
-              <p className="oddsBetter">Are your odds of winning better if you: </p>
+              <p className="oddsBetter">Is the probability of you winning higher if you: </p>
               <button id="hitGuessBtn" className ="guess-btn" onClick={updateGuess}>Hit?</button>
               <span> or </span>
               <button id="standGuessBtn" className="guess-btn" onClick={updateGuess}>Stand?</button>
@@ -612,6 +613,7 @@ function Blackjack() {
               
           )}
 
+      </div>
           </div>
           <div className="hand dealer-hand">
             <h2 id="dScore">Dealer Score: {gameStatus === 'over' ? sumValue(dealerHand) : '?'}</h2>
@@ -623,7 +625,80 @@ function Blackjack() {
             </div>
             {/* <p>Dealer Score: {gameStatus === 'over' ? sumValue(dealerHand) : '?'}</p> */}
           </div>
-  
+
+          {!quizMode && (
+            <div>
+            {gameStatus === 'playerMove' && dealerHand.length > 0 && (
+              <div id="curr-odds-container">
+                <span id="curr-odds">Current Odds: </span><InitialOddsCalc key={1} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerScore={sumValue(playerHand)} />
+              </div>
+            )}
+            {gameStatus ==='playerMove' && (<><button className="numBustsBtn" onClick={updateProbs}>show odds after {numBustsShown + 1} hit{numBustsShown > 0 ? 's' : ''}</button>
+            {numBustsShown > 0 && (<button className="numBustsBtn" onClick={resetProbs}>clear</button>)}
+            {/* {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hit{index > 0 ? 's' : ''}: </>
+            <OddsCalc key={index + 50} dealerArr={dealerOdds} playerArr={bust}/>
+            <HitOddsList  key={index} arr={bust}/>
+            </div>)} */}
+
+            {bustOdds.map((bust, index) => (
+                <div id='numBusts' key={index}>
+                  <span className="future-odds">Odds After {index + 1} hit{index > 0 ? 's' : ''}:</span>
+                  <OddsCalc key={index + 50} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerArr={bust} />
+                  <button id="check-btn" onClick={() => toggleHitOddsList(index)}>
+                    {hitOddsVisibility[index] ? 'Hide' : 'Details'}
+                  </button>
+                  <div style={{ display: hitOddsVisibility[index] ? 'block' : 'none' }}>
+                    <HitOddsList key={index} arr={bust} />
+                  </div>
+                </div>
+              ))}
+            </>)}
+          </div>)}
+
+          {quizMode && (
+            <div className="quiz-mode-container">
+              <h2>Quiz Mode:</h2>
+              <div>Guesses: <span className="correct">Correct: {correctGuess}</span><span className="incorrect">Incorrect: {wrongGuess}</span>
+              <button id="resetGuessScoreBtn" onClick={resetGuessScores}>reset</button></div>
+              {gameStatus ==='playerMove' && (
+              <>
+              {!playerGuess && (<>
+              <p className="oddsBetter">Is your probability of winning higher if you: </p>
+              <button id="hitGuessBtn" className ="guess-btn" onClick={updateGuess}>Hit?</button>
+              <span> or </span>
+              <button id="standGuessBtn" className="guess-btn" onClick={updateGuess}>Stand?</button>
+              </>)}
+            
+              {playerGuess && (<>
+              <div className={isCorrectGuess.toLowerCase()}>{isCorrectGuess}</div>
+              <span id="curr-odds">Current Odds: </span><InitialOddsCalc dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerScore={sumValue(playerHand)} />
+              {gameStatus ==='playerMove' && (<><button className="numBustsBtn" onClick={updateProbs}>show odds after {numBustsShown + 1} hit{numBustsShown > 0 ? 's' : ''}</button>
+            {numBustsShown > 0 && (<button className="numBustsBtn" onClick={resetProbs}>clear</button>)}
+            {/* {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hit{index > 0 ? 's' : ''}: </>
+            <OddsCalc key={index + 50} dealerArr={dealerOdds} playerArr={bust}/>
+            <HitOddsList  key={index} arr={bust}/>
+            </div>)} */}
+
+            {bustOdds.map((bust, index) => (
+                <div id='numBusts' key={index}>
+                  <span className="future-odds">Odds After {index + 1} hit{index > 0 ? 's' : ''}:</span>
+                  <OddsCalc key={index + 50} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerArr={bust} />
+                  <button id="check-btn" onClick={() => toggleHitOddsList(index)}>
+                    {hitOddsVisibility[index] ? 'Hide' : 'Details'}
+                  </button>
+                  <div style={{ display: hitOddsVisibility[index] ? 'block' : 'none' }}>
+                    <HitOddsList className="darkgrayodds" key={index} arr={bust} />
+                  </div>
+                </div>
+              ))}
+            </>)}
+              {/* <span>Odds if Hit: </span><OddsCalc dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerArr={calculatePlayerOdds(playerHand, deck, 1)} />
+              <HitOddsList arr={calculatePlayerOdds(playerHand, deck, 1)} /> */}
+              </>
+              )}</>)}
+              </div>
+              
+          )}
           {gameStatus === 'playerMove' && (
             <>
         {showOdds && (
