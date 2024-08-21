@@ -666,7 +666,7 @@ function Blackjack() {
               <>
               {!playerGuess && (<>
               <p className="oddsBetter">Is your probability of winning higher if you: </p>
-              <button id="hitGuessBtn" className ="guess-btn" onClick={updateGuess}>Hit?</button>
+              <button id="hitGuessBtn" className ="guess-btn" onClick={updateGuess}>Hit{playerHand.length > 2 ? " Again":""}?</button>
               <span> or </span>
               <button id="standGuessBtn" className="guess-btn" onClick={updateGuess}>Stand?</button>
               </>)}
