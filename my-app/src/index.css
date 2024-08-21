@@ -59,19 +59,8 @@ h1 {
 .game-controls {
   display: flex;
   justify-content: center;
+  gap: 5px;
   margin: 15px 0; /* Reduced margin */
-}
-
-.game-controls button {
-  margin: 0 5px; /* Reduced margin */
-  padding: 8px 15px; /* Reduced padding */
-  font-size: 14px; /* Reduced font size */
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
 }
 
 .game-controls button:hover {
@@ -341,8 +330,8 @@ input:checked + .slider:before {
 }
 
 .game-controls button {
-  margin: 0 5px;
-  padding: 8px 15px;
+  margin: 0 0px;
+  padding: 8px 8px;
   font-size: 14px;
   background-color: #3498db;
   color: white;
@@ -350,6 +339,8 @@ input:checked + .slider:before {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .game-controls button:hover {
@@ -556,12 +547,12 @@ input:checked + .slider:before {
 }
 
 .guess-results {
-  margin-top: 15px;
+  margin-top: 0px;
 }
 
 .guess-result {
   font-size: 18px;
-  margin: 5px 0;
+  margin: 0;
 }
 
 .oddsBetter {
@@ -570,7 +561,8 @@ input:checked + .slider:before {
 }
 
 .correct, .incorrect {
-  padding: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 #resetGuessScoreBtn {
@@ -591,3 +583,39 @@ input:checked + .slider:before {
   display: none;
 }
 
+#guessesBox {
+  margin-bottom: 0px;
+}
+
+#guessNameDiv {
+  margin-top: 0px;
+}
+
+#guessBox1 {
+  margin-top: 0px;
+}
+
+.card {
+  width: 100px; /* Set a fixed width for consistency */
+  height: 140px; /* Adjusted height to ensure cards are not cut off */
+  border: 1px solid #bdc3c7;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+  box-sizing: border-box; /* Ensure padding and border are included in width and height */
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure image covers the card */
+}
+
+#moves2 {
+  background-color: #ecf0f1;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 95%;
+  padding: 10px;
+}

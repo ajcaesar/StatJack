@@ -417,7 +417,7 @@ function Blackjack() {
   }
 
   const dealerOddsBtn = () => {
-    setShowOdds(true);
+    setShowOdds(!showOdds);
     const odds = calculateDealerOdds([dealerHand[0]], deck);
     setDealerOdds(odds);
   };
@@ -540,7 +540,7 @@ function Blackjack() {
             {/* <p>Player Score: {sumValue(playerHand)}</p> */}
             <div id="nonetype">
             {!quizMode && (
-            <div>
+            <div id="moves1">
             {gameStatus === 'playerMove' && dealerHand.length > 0 && (
               <div id="curr-odds-container">
                 <span id="curr-odds">Current Odds: </span><InitialOddsCalc key={1} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerScore={sumValue(playerHand)} />
@@ -571,7 +571,7 @@ function Blackjack() {
           {quizMode && (
             <div className="quiz-mode-container">
               <h2>Quiz Mode:</h2>
-              <div>Guesses: <span className="correct">Correct: {correctGuess}</span><span className="incorrect">Incorrect: {wrongGuess}</span>
+              <div id="guessesBox">Guesses: <span className="correct">Correct: {correctGuess}</span><span className="incorrect">Incorrect: {wrongGuess}</span>
               <button id="resetGuessScoreBtn" onClick={resetGuessScores}>reset</button></div>
               {gameStatus ==='playerMove' && (
               <>
@@ -583,7 +583,7 @@ function Blackjack() {
               </>)}
             
               {playerGuess && (<>
-              <div className={isCorrectGuess.toLowerCase()}>{isCorrectGuess}</div>
+              <div id="guessNameDiv" className={isCorrectGuess.toLowerCase()}>{isCorrectGuess}</div>
               <span id="curr-odds">Current Odds: </span><InitialOddsCalc dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerScore={sumValue(playerHand)} />
               {gameStatus ==='playerMove' && (<><button className="numBustsBtn" onClick={updateProbs}>show odds after {numBustsShown + 1} hit{numBustsShown > 0 ? 's' : ''}</button>
             {numBustsShown > 0 && (<button className="numBustsBtn" onClick={resetProbs}>clear</button>)}
@@ -627,7 +627,7 @@ function Blackjack() {
           </div>
 
           {!quizMode && (
-            <div>
+            <div id="moves2">
             {gameStatus === 'playerMove' && dealerHand.length > 0 && (
               <div id="curr-odds-container">
                 <span id="curr-odds">Current Odds: </span><InitialOddsCalc key={1} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerScore={sumValue(playerHand)} />
@@ -670,7 +670,7 @@ function Blackjack() {
               </>)}
             
               {playerGuess && (<>
-              <div className={isCorrectGuess.toLowerCase()}>{isCorrectGuess}</div>
+              <div id="guessBox1" className={isCorrectGuess.toLowerCase()}>{isCorrectGuess}</div>
               <span id="curr-odds">Current Odds: </span><InitialOddsCalc dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerScore={sumValue(playerHand)} />
               {gameStatus ==='playerMove' && (<><button className="numBustsBtn" onClick={updateProbs}>show odds after {numBustsShown + 1} hit{numBustsShown > 0 ? 's' : ''}</button>
             {numBustsShown > 0 && (<button className="numBustsBtn" onClick={resetProbs}>clear</button>)}
@@ -714,7 +714,7 @@ function Blackjack() {
             {gameStatus ==='playerMove' && playerHand.length === 2 && (<><button onClick={doubleDown}>Double Down</button>
             <button onClick={surrender}>Surrender</button></>)}
         {!showOdds && (<button onClick={dealerOddsBtn}>Show Dealer Odds</button>)}
-        {showOdds && (<button onClick={dealerOddsBtn}>Recalculate Dealer Odds</button>)}
+        {showOdds && (<button onClick={dealerOddsBtn}>Hide Dealer Odds</button>)}
         <button onClick={() => initializeGame()}>Restart</button>
         </div>
         </>
