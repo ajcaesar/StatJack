@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/StatJack/static/css/main.af2bbfd9.css",
-    "main.js": "/StatJack/static/js/main.68aca39a.js",
+    "main.css": "/StatJack/static/css/main.ce6f52e2.css",
+    "main.js": "/StatJack/static/js/main.2b7d7edc.js",
     "static/js/510.75e74c4a.chunk.js": "/StatJack/static/js/510.75e74c4a.chunk.js",
     "static/media/castle.svg": "/StatJack/static/media/castle.ee65ea00.svg",
     "static/media/clubs_jack.svg": "/StatJack/static/media/clubs_jack.9dc08cee.svg",
@@ -57,12 +57,12 @@
     "static/media/diamonds_3.svg": "/StatJack/static/media/diamonds_3.b6f06d0c.svg",
     "static/media/diamonds_ace.svg": "/StatJack/static/media/diamonds_ace.548007a6.svg",
     "index.html": "/StatJack/index.html",
-    "main.af2bbfd9.css.map": "/StatJack/static/css/main.af2bbfd9.css.map",
-    "main.68aca39a.js.map": "/StatJack/static/js/main.68aca39a.js.map",
+    "main.ce6f52e2.css.map": "/StatJack/static/css/main.ce6f52e2.css.map",
+    "main.2b7d7edc.js.map": "/StatJack/static/js/main.2b7d7edc.js.map",
     "510.75e74c4a.chunk.js.map": "/StatJack/static/js/510.75e74c4a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.af2bbfd9.css",
-    "static/js/main.68aca39a.js"
+    "static/css/main.ce6f52e2.css",
+    "static/js/main.2b7d7edc.js"
   ]
 }
