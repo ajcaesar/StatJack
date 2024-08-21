@@ -21,6 +21,12 @@ function Blackjack() {
   const [losses, setLosses] = useState(() => parseInt(localStorage.getItem('losses')) || 0);
   const [winner, setWinner] = useState('neither');
   const [hitOddsVisibility, setHitOddsVisibility] = useState({});
+  const [quizMode, setQuizMode] = useState(false);
+  const [correctGuess, setCorrectGuess] = useState(() => parseInt(localStorage.getItem('correctGuess')) || 0);
+  const [wrongGuess, setWrongGuess] = useState(() => parseInt(localStorage.getItem('wrongGuess')) || 0);
+  const [playerGuess, setPlayerGuess] = useState(false);
+  const [isCorrectGuess, setIsCorrectGuess] = useState("NA")
+
   
 
   const toggleHitOddsList = (index) => {
@@ -50,6 +56,14 @@ function Blackjack() {
   useEffect(() => {
     localStorage.setItem('wins', wins);
   }, [wins]);
+
+  useEffect(() => {
+    localStorage.setItem('correctGuess', correctGuess);
+  }, [correctGuess]);
+
+  useEffect(() => {
+    localStorage.setItem('wrongGuess', wrongGuess);
+  }, [wrongGuess]);
   
   useEffect(() => {
     localStorage.setItem('losses', losses);
@@ -106,6 +120,8 @@ function Blackjack() {
     setShowOdds(false);
     setNumBustsShown(0);
     setBustOdds([]);
+    setPlayerGuess(false);
+    setIsCorrectGuess("NA")
   };
 
   const resetWins = () => {
@@ -156,6 +172,7 @@ function Blackjack() {
 
   // probability that the player beats the dealer if they hit again
   function probOfHit(dealerArr, playerArr) {
+    // console.log("playerArr: " + playerArr);
     let winOdds = 0
     winOdds += playerArr[playerArr.length - 2]; // chance of the player getting BlackJack // + dealerArr[dealerArr.length - 1] * (1-playerArr[playerArr.length - 1]);
     let tieOdds = 0;
@@ -168,6 +185,9 @@ function Blackjack() {
       tieOdds += playerArr[i] * tie; 
       loseOdds += playerArr[i] * lose;
     }}
+    // console.log("winOdds: " + winOdds);
+    // console.log("loseOdds: " + loseOdds);
+    // console.log("tieOdds: " + tieOdds);
     return {winOdds, tieOdds, loseOdds};
   }
 
@@ -406,9 +426,69 @@ function Blackjack() {
     initializeGame(true);
   }
 
+  const checkGuess = (value, ev) => {
+    if (value) {
+
+    }
+  }
+
+  const updateGuess = (event) => {
+    setPlayerGuess(true);
+    let currId = event.target.id;
+    let {win, tie, lose} = probOfStay(calculateDealerOdds([dealerHand[0]], deck), sumValue(playerHand));
+    let playOdds = calculatePlayerOdds(playerHand, deck, 1);
+    // console.log(playOdds);
+    let {winOdds, tieOdds, loseOdds} = probOfHit(calculateDealerOdds([dealerHand[0]], deck), playOdds);
+    
+    // console.log("win: " + win)
+    // console.log("win1: " + winOdds)
+    
+    if (currId ==="hitGuessBtn") {
+      if (winOdds > win) {
+        setIsCorrectGuess("Correct")
+        setCorrectGuess(correctGuess + 1);
+      }
+      else if (winOdds === win) {
+        setIsCorrectGuess("Equal")
+      }
+      else {
+        setIsCorrectGuess("Incorrect")
+        setWrongGuess(wrongGuess + 1);
+      }
+
+    }
+    else if (currId ==="standGuessBtn") {
+      if (win > winOdds) {
+        setIsCorrectGuess("Correct")
+        setCorrectGuess(correctGuess + 1);
+      }
+      else if (win === winOdds) {
+        setIsCorrectGuess("Equal")
+      }
+      else {
+        setIsCorrectGuess("Incorrect")
+        setWrongGuess(wrongGuess + 1);
+      }
+    }
+
+  }
+
+  const resetGuessScores = () => {
+    setCorrectGuess(0);
+    setWrongGuess(0);
+  }
+  
+  const resetQuizMode = () => {
+    setQuizMode(prevQuizMode => !prevQuizMode);
+    initializeGame();
+  }
+
   return (
     <div className="blackjack-game">
       <h1 id="titlePage">StatJack</h1>
+      <button id="quizMode" onClick={resetQuizMode}>
+  Quiz Mode: {quizMode ? "On" : "Off"} 
+</button>
       
       <div className="game-settings">
         <div className="deck-selector">
@@ -458,6 +538,8 @@ function Blackjack() {
               ))}
             </div>
             {/* <p>Player Score: {sumValue(playerHand)}</p> */}
+            {!quizMode && (
+            <div>
             {gameStatus === 'playerMove' && dealerHand.length > 0 && (
               <div id="curr-odds-container">
                 <span id="curr-odds">Current Odds: </span><InitialOddsCalc key={1} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerScore={sumValue(playerHand)} />
@@ -483,6 +565,52 @@ function Blackjack() {
                 </div>
               ))}
             </>)}
+          </div>)}
+
+          {quizMode && (
+            <div className="quiz-mode-container">
+              <h2>Quiz Mode:</h2>
+              <div>Guesses: <span className="correct">Correct: {correctGuess}</span><span className="incorrect">Incorrect: {wrongGuess}</span>
+              <button id="resetGuessScoreBtn" onClick={resetGuessScores}>reset</button></div>
+              {gameStatus ==='playerMove' && (
+              <>
+              {!playerGuess && (<>
+              <p className="oddsBetter">Are your odds of winning better if you: </p>
+              <button id="hitGuessBtn" className ="guess-btn" onClick={updateGuess}>Hit?</button>
+              <span> or </span>
+              <button id="standGuessBtn" className="guess-btn" onClick={updateGuess}>Stand?</button>
+              </>)}
+            
+              {playerGuess && (<>
+              <div className={isCorrectGuess.toLowerCase()}>{isCorrectGuess}</div>
+              <span id="curr-odds">Current Odds: </span><InitialOddsCalc dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerScore={sumValue(playerHand)} />
+              {gameStatus ==='playerMove' && (<><button className="numBustsBtn" onClick={updateProbs}>show odds after {numBustsShown + 1} hit{numBustsShown > 0 ? 's' : ''}</button>
+            {numBustsShown > 0 && (<button className="numBustsBtn" onClick={resetProbs}>clear</button>)}
+            {/* {bustOdds.map((bust, index) => <div id='numBusts' key={index}><>{index + 1} hit{index > 0 ? 's' : ''}: </>
+            <OddsCalc key={index + 50} dealerArr={dealerOdds} playerArr={bust}/>
+            <HitOddsList  key={index} arr={bust}/>
+            </div>)} */}
+
+            {bustOdds.map((bust, index) => (
+                <div id='numBusts' key={index}>
+                  <span className="future-odds">Odds After {index + 1} hit{index > 0 ? 's' : ''}:</span>
+                  <OddsCalc key={index + 50} dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerArr={bust} />
+                  <button id="check-btn" onClick={() => toggleHitOddsList(index)}>
+                    {hitOddsVisibility[index] ? 'Hide' : 'Details'}
+                  </button>
+                  <div style={{ display: hitOddsVisibility[index] ? 'block' : 'none' }}>
+                    <HitOddsList className="darkgrayodds" key={index} arr={bust} />
+                  </div>
+                </div>
+              ))}
+            </>)}
+              {/* <span>Odds if Hit: </span><OddsCalc dealerArr={calculateDealerOdds([dealerHand[0]], deck)} playerArr={calculatePlayerOdds(playerHand, deck, 1)} />
+              <HitOddsList arr={calculatePlayerOdds(playerHand, deck, 1)} /> */}
+              </>
+              )}</>)}
+              </div>
+              
+          )}
 
           </div>
           <div className="hand dealer-hand">
@@ -530,5 +658,7 @@ function Blackjack() {
     </div>
   );
 }
+
+
 
 export default Blackjack;

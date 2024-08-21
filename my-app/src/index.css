@@ -331,7 +331,7 @@ input:checked + .slider:before {
 .odds-list p {
   margin: 0;
   padding: 5px 10px;
-  background-color: #ecf0f1;
+  background-color: lightgray;
   border-radius: 5px;
 }
 
@@ -433,13 +433,18 @@ input:checked + .slider:before {
   margin: 0;
 }
 
-.wins-counter .wins {
+.wins-counter .wins, .correct{
   color: #27ae60;
   font-weight: bold;
 }
 
-.wins-counter .losses {
+.wins-counter .losses, .incorrect {
   color: #e74c3c;
+  font-weight: bold;
+}
+
+.na, .equal {
+  color: darkblue;
   font-weight: bold;
 }
 
@@ -497,3 +502,84 @@ input:checked + .slider:before {
 .future-odds {
   margin: 5px;
 }
+
+#quizMode {
+  background-color: #3498db;
+  color: white;
+  padding: 6px 10px;
+  font-size: 14px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+#quizMode:hover {
+  background-color: darkblue;
+}
+
+.quiz-mode-container {
+  margin-top: 10px;
+  font-size: 18px;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #ecf0f1;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+}
+
+#hitGuessBtn, #standGuessBtn, #resetGuessScoreBtn{
+  padding: 10px;
+  margin: 5px;
+  background-color: #3498db;
+  font-size: 16px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#hitGuessBtn:hover, #standGuessBtn:hover, #resetGuessScoreBtn:hover {
+  background-color: darkblue;
+}
+
+.guess-results {
+  margin-top: 15px;
+}
+
+.guess-result {
+  font-size: 18px;
+  margin: 5px 0;
+}
+
+.oddsBetter {
+  margin: 0;
+  padding: 0px;
+}
+
+.correct, .incorrect {
+  padding: 5px;
+}
+
+#resetGuessScoreBtn {
+  padding: 8px;
+  font-size: 16px;
+}
+
+.quiz-mode-container h2 {
+  margin-bottom: 5px;
+}
+
+/* .quiz-mode-conttainer HitOddsList.darkgrayodds{
+  background-color: lightgray;
+} */
+
+
+

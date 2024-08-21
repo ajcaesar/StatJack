@@ -20,6 +20,7 @@ function Blackjack2() {
   const [wins, setWins] = useState(() => parseInt(localStorage.getItem('wins')) || 0);
   const [losses, setLosses] = useState(() => parseInt(localStorage.getItem('losses')) || 0);
   const [winner, setWinner] = useState('neither');
+  const [quizMode, setQuizMode] = useState(false);
 
   const initializeDeck = () => {
     return new Promise(resolve => {
@@ -342,7 +343,7 @@ function Blackjack2() {
   return (
     <div className="blackjack-game">
       <h1>Blackjack</h1>
-      
+      <button id="quizMode" onClick={setQuizMode(quizMode => !quizMode)}>Quiz Mode: {quizMode ? "On" : "Off"} </button>
       <div className="game-settings">
         <div className="deck-selector">
           <label htmlFor="numDecks">Number of decks:</label>
